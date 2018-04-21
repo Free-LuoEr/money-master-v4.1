@@ -56,8 +56,8 @@ public class AccountQueryWorkflow {
     String moneyTransferId = de.getEntityId();
     String fromAccountId = de.getEvent().getDetails().getFromAccountId();
     String toAccountId = de.getEvent().getDetails().getToAccountId();
-    logger.info("**************** account version={}, {}", fromAccountId, eventId);
     logger.info("**************** account version={}, {}", toAccountId, eventId);
+    logger.info("**************** account version={}, {}", fromAccountId, eventId);
 
     AccountTransactionInfo ti = new AccountTransactionInfo(moneyTransferId,
             fromAccountId,
@@ -72,12 +72,12 @@ public class AccountQueryWorkflow {
 
   @EventHandlerMethod
   public void recordDebit(DispatchedEvent<AccountDebitedEvent> de) {
-    saveChange(de, -1);
+    saveChange(de, +1);
   }
 
   @EventHandlerMethod
   public void recordCredit(DispatchedEvent<AccountCreditedEvent> de) {
-    saveChange(de, +1);
+    saveChange(de, -1);
   }
 
   @EventHandlerMethod
@@ -96,7 +96,7 @@ public class AccountQueryWorkflow {
     String fromAccountId = de.getEvent().getDetails().getFromAccountId();
     String toAccountId = de.getEvent().getDetails().getToAccountId();
 
-    accountInfoUpdateService.updateTransactionStatus(fromAccountId, transactionId, TransferState.COMPLETED);
+    accountInfoUpdateService.updateTransactionStatus(fromAccountId, transactionId, TransferState.FAILED_DUE_TO_INSUFFICIENT_FUNDS);
     accountInfoUpdateService.updateTransactionStatus(toAccountId, transactionId, TransferState.COMPLETED);
   }
 
@@ -106,7 +106,7 @@ public class AccountQueryWorkflow {
     String fromAccountId = de.getEvent().getDetails().getFromAccountId();
     String toAccountId = de.getEvent().getDetails().getToAccountId();
 
-    accountInfoUpdateService.updateTransactionStatus(fromAccountId, transactionId, TransferState.FAILED_DUE_TO_INSUFFICIENT_FUNDS);
+    accountInfoUpdateService.updateTransactionStatus(fromAccountId, transactionId, TransferState.COMPLETED);
     accountInfoUpdateService.updateTransactionStatus(toAccountId, transactionId, TransferState.FAILED_DUE_TO_INSUFFICIENT_FUNDS);
   }
 
@@ -120,6 +120,6 @@ public class AccountQueryWorkflow {
     String accountId = de.getEntityId();
     logger.info("**************** account version={}, {}", accountId, de.getEventId().asString());
 
-    accountInfoUpdateService.updateBalance(accountId, changeId, balanceDelta, ci);
+    accountInfoUpdateService.updateBalance(changeId, accountId, balanceDelta, ci);
   }
 }

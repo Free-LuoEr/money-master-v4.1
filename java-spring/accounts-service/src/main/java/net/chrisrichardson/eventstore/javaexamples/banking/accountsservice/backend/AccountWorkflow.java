@@ -20,18 +20,18 @@ public class AccountWorkflow {
     BigDecimal amount = event.getDetails().getAmount();
     String transactionId = ctx.getEntityId();
 
-    String fromAccountId = event.getDetails().getFromAccountId();
+    String fromAccountId = event.getDetails().getToAccountId();
 
-    return ctx.update(Account.class, fromAccountId, new DebitAccountCommand(amount, transactionId));
+    return ctx.update(Account.class, fromAccountId, new CreditAccountCommand(amount, transactionId));
   }
 
   @EventHandlerMethod
   public CompletableFuture<EntityWithIdAndVersion<Account>> creditAccount(EventHandlerContext<DebitRecordedEvent> ctx) {
     DebitRecordedEvent event = ctx.getEvent();
     BigDecimal amount = event.getDetails().getAmount();
-    String fromAccountId = event.getDetails().getToAccountId();
+    String fromAccountId = event.getDetails().getFromAccountId();
     String transactionId = ctx.getEntityId();
 
-    return ctx.update(Account.class, fromAccountId, new CreditAccountCommand(amount, transactionId));
+    return ctx.update(Account.class, fromAccountId, new DebitAccountCommand(amount, transactionId));
   }
 }
