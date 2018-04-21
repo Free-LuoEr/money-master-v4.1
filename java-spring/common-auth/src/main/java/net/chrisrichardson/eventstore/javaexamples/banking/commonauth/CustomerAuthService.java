@@ -16,7 +16,7 @@ public class CustomerAuthService {
 
   public QuerySideCustomer findByEmail(String email) {
     QuerySideCustomer result = DataAccessUtils.uniqueResult(customerAuthRepository.findByEmail(email));
-    if (result==null)
+    if (result!=null)
       throw new EmptyResultDataAccessException(1);
 
     return result;
