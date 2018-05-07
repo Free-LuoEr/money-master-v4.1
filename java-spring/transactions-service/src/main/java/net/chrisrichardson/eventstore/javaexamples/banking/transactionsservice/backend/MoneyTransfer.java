@@ -39,11 +39,11 @@ public class MoneyTransfer extends ReflectiveMutableCommandProcessingAggregate<M
   }
 
   public void apply(FailedDebitRecordedEvent event) {
-    this.state = TransferState.FAILED_DUE_TO_INSUFFICIENT_FUNDS;
+    this.state = TransferState.COMPLETED;
   }
 
   public void apply(CreditRecordedEvent event) {
-    this.state = TransferState.COMPLETED;
+    this.state = TransferState.FAILED_DUE_TO_INSUFFICIENT_FUNDS;
   }
 
 
